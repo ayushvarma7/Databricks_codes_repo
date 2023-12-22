@@ -1,0 +1,49 @@
+resources:
+  jobs:
+    Job_With_Multiple_Tasks_Sequentially:
+      name: Job_With_Multiple_Tasks_Sequentially
+      tasks:
+        - task_key: Job_With_Multiple_Tasks
+          notebook_task:
+            notebook_path: /Users/ayushvarma04@gmail.com/Lab 5/Task 1 Notebook
+            source: WORKSPACE
+          job_cluster_key: Job_cluster
+        - task_key: Task_1
+          depends_on:
+            - task_key: Job_With_Multiple_Tasks
+          notebook_task:
+            notebook_path: /Users/ayushvarma04@gmail.com/Lab 5/Sleeping_for_10_seconds
+            source: WORKSPACE
+          existing_cluster_id: 1222-043020-3fjkzk2t
+        - task_key: Task_2
+          depends_on:
+            - task_key: Task_1
+          notebook_task:
+            notebook_path: /Users/ayushvarma04@gmail.com/Lab 5/Sleeping_for_20_seconds
+            source: WORKSPACE
+          existing_cluster_id: 1222-043020-3fjkzk2t
+        - task_key: Task_Final
+          depends_on:
+            - task_key: Task_2
+          notebook_task:
+            notebook_path: /Users/ayushvarma04@gmail.com/Lab 5/Task 2 Notebook
+            source: WORKSPACE
+          existing_cluster_id: 1222-043020-3fjkzk2t
+      job_clusters:
+        - job_cluster_key: Job_cluster
+          new_cluster:
+            cluster_name: ""
+            spark_version: 13.3.x-scala2.12
+            aws_attributes:
+              first_on_demand: 1
+              availability: SPOT_WITH_FALLBACK
+              zone_id: us-east-1e
+              spot_bid_price_percent: 100
+              ebs_volume_count: 0
+            node_type_id: i3.xlarge
+            spark_env_vars:
+              PYSPARK_PYTHON: /databricks/python3/bin/python3
+            enable_elastic_disk: false
+            data_security_mode: SINGLE_USER
+            runtime_engine: PHOTON
+            num_workers: 8
