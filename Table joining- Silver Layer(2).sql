@@ -3,7 +3,11 @@ use hr_silver
 
 -- COMMAND ----------
 
-create table location
+-- create table location
+
+-- COMMAND ----------
+
+-- drop table location
 
 -- COMMAND ----------
 
@@ -12,6 +16,12 @@ select * from hr_bronze.countries_raw
 -- COMMAND ----------
 
 select * from hr_bronze.regions_raw
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC Since both countries table and region tables have common columns,
+-- MAGIC so we left join it on countries
 
 -- COMMAND ----------
 
@@ -25,7 +35,7 @@ select * from hr_silver.misc
 
 -- COMMAND ----------
 
-drop table hr_silver.misc;
+-- drop table hr_silver.misc;
 
 -- COMMAND ----------
 
@@ -52,18 +62,14 @@ select count(*) as frequency, COUNTRY_NAME from full_address group by COUNTRY_NA
 
 -- COMMAND ----------
 
-create table hr_silver.full_address as
-select location_cleaned.location_id, location_cleaned.street_address, location_cleaned.postal_code
-from location_cleaned left join hr_silver.misc
-on location_cleaned.country_id= hr_silver.misc.country_id;
+-- create table hr_silver.full_address as
+-- select location_cleaned.location_id, location_cleaned.street_address, location_cleaned.postal_code
+-- from location_cleaned left join hr_silver.misc
+-- on location_cleaned.country_id= hr_silver.misc.country_id;
 
 -- COMMAND ----------
 
-
-
--- COMMAND ----------
-
-drop table full_address
+-- drop table full_address
 
 -- COMMAND ----------
 
@@ -90,7 +96,7 @@ select * from job_details
 
 -- COMMAND ----------
 
-drop table job_details
+-- drop table job_details
 
 -- COMMAND ----------
 
@@ -101,3 +107,13 @@ describe history employees_clean
 -- COMMAND ----------
 
 select * from employees_clean
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC drop the unrequired table
+-- MAGIC
+
+-- COMMAND ----------
+
+drop table misc
