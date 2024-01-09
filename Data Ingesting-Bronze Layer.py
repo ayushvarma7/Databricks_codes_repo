@@ -78,3 +78,52 @@ regions_df.write.saveAsTable("hr_bronze.regions_raw")
 
 # MAGIC %sql
 # MAGIC select * from hr_bronze.jobs_raw
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC #####Below commands are for testing
+
+# COMMAND ----------
+
+locations_df.select("STATE_PROVINCE").show()
+
+# COMMAND ----------
+
+from pyspark.sql.functions import *
+
+column_name = "your_column"
+old_value = "old_value"
+new_value = "new_value"
+
+df = locations_df.withColumn("STATE_PROVINCE", when(locations_df["STATE_PROVINCE"] == " - ", None).otherwise(locations_df["STATE_PROVINCE"]))
+
+
+display(df)
+
+# display(locations_df)
+
+# COMMAND ----------
+
+locations_df=locations_df.withColumn("STATE_PROVINCE", when(locations_df["STATE_PROVINCE"] == " - ", None).otherwise(locations_df["STATE_PROVINCE"]))
+
+# COMMAND ----------
+
+ employees_df=employees_df.withColumn("COMMISSION_PCT", when(employees_df["COMMISSION_PCT"]==' - ', 0).otherwise(employees_df["COMMISSION_PCT"]))
+
+# COMMAND ----------
+
+# display(employees_df)
+
+# COMMAND ----------
+
+# employees_df.printSchema()
+
+# COMMAND ----------
+
+# this code gives error
+# employees_df=employees_df.withColumn("COMMISSION_PCT", col("COMMISSION_PCT").cast("Integer"))
+
+# COMMAND ----------
+
+# display(employees_df)
