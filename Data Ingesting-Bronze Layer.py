@@ -127,3 +127,27 @@ locations_df=locations_df.withColumn("STATE_PROVINCE", when(locations_df["STATE_
 # COMMAND ----------
 
 # display(employees_df)
+
+# COMMAND ----------
+
+# Displaying the locations_df grouped by country_id
+x=locations_df.groupBy('COUNTRY_ID').count()
+
+x.show()
+
+# COMMAND ----------
+
+data = [("John", "USA", 5000),
+        ("Alice", "Canada", 6000),
+        ("Bob", "USA", 5500),
+        ("Eve", "Canada", 7000)]
+
+columns = ["EmployeeName", "Country", "Salary"]
+
+employee_df = spark.createDataFrame(data, columns)
+
+# Group by the 'Country' column and count the occurrences
+grouped_df = employee_df.groupBy('Country').count()
+
+# Show the grouped DataFrame
+grouped_df.show()
