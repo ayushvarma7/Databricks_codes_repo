@@ -123,18 +123,34 @@ select * from hr_silver.employees_clean
 -- COMMAND ----------
 
 -- create or replace table hr_silver.emp_details as
--- select e1.EMPLOYEE_ID, concat(e1.FIRST_NAME, ' ',  e1.LAST_NAME) as NAME, e1.JOB_ID, concat(e2.FIRST_NAME, ' ', e2.LAST_NAME) as MANAGER_NAME, e1.HIRE_DATE, e1.SALARY, j.department_name from hr_silver.employees_clean e1 join hr_silver.employees_clean e2
--- on e1.MANAGER_ID=e2.EMPLOYEE_ID
--- left outer join hr_silver.job_details j on
--- e1.DEPARTMENT_ID=j.department_id
+-- ((select e1.EMPLOYEE_ID, concat(e1.FIRST_NAME, ' ',  e1.LAST_NAME) as NAME, e1.JOB_ID, concat(e2.FIRST_NAME, ' ', e2.LAST_NAME) as MANAGER_NAME, j.department_name 
+-- from hr_silver.employees_clean e1 
+-- inner join hr_silver.employees_clean e2
+-- on e1.MANAGER_ID=e2.EMPLOYEE_ID)
+-- inner join hr_silver.job_details j on
+-- e1.job_id=j.job_id)
+
+-- select result.*, job_title, department_name, department_id 
+-- from (Select e1.EMPLOYEE_ID,e1.FIRST_NAME,e1.LAST_NAME, e1.MANAGER_ID, e2.FIRST_NAME, e1.JOB_ID
+-- From hive_metastore.hr_silver.employees_clean e1
+-- left join hive_metastore.hr_silver.employees_clean e2
+-- On e1.MANAGER_ID = e2.EMPLOYEE_ID) as result
+-- left join hive_metastore.hr_silver.job_details
+-- ON result.JOB_ID = hive_metastore.hr_silver.job_details.job_id;
+ 
 
 -- COMMAND ----------
 
 create or replace table hr_silver.emp_details as
-select e1.EMPLOYEE_ID, concat(e1.FIRST_NAME, ' ',  e1.LAST_NAME) as NAME, e1.JOB_ID, concat(e2.FIRST_NAME, ' ', e2.LAST_NAME) as MANAGER_NAME, e1.HIRE_DATE, e1.SALARY from hr_silver.employees_clean e1 join hr_silver.employees_clean e2
+select e1.EMPLOYEE_ID, concat(e1.FIRST_NAME, ' ',  e1.LAST_NAME) as NAME, e1.JOB_ID, concat(e2.FIRST_NAME, ' ', e2.LAST_NAME) as MANAGER_NAME
+from hr_silver.employees_clean e1 
+inner join hr_silver.employees_clean e2
 on e1.MANAGER_ID=e2.EMPLOYEE_ID
-
 
 -- COMMAND ----------
 
 select * from hr_silver.emp_details
+
+-- COMMAND ----------
+
+select * from hr_silver.job_details
