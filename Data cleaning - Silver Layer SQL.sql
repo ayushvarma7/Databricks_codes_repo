@@ -12,7 +12,7 @@ use hr_silver
 
 -- COMMAND ----------
 
-create table employees_clean as 
+create or replace table employees_clean as 
 select * from hr_bronze.employees_raw
 
 -- COMMAND ----------
@@ -75,7 +75,7 @@ select * from hr_silver.employees_clean
 
 -- COMMAND ----------
 
-create table hr_silver.location_cleaned as
+create or replace table hr_silver.location_cleaned as
 select * from hr_bronze.locations_raw
 
 
