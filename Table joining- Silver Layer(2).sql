@@ -54,11 +54,13 @@ select count(*) as frequency, COUNTRY_NAME from full_address group by COUNTRY_NA
 
 -- COMMAND ----------
 
--- select count(*) as `locations per region` from full_address group by REGION_ID
+-- MAGIC %md
+-- MAGIC ###Creating a gold table containing address
 
 -- COMMAND ----------
 
-select * from hr_bronze.job_history_raw
+create or replace table hr_gold.address as
+select location_id, street_address, city, COUNTRY_NAME, REGION_NAME from hr_silver.full_address
 
 -- COMMAND ----------
 
@@ -102,11 +104,11 @@ select * from employees_clean
 
 -- COMMAND ----------
 
--- drop table location_cleaned
+drop table location_cleaned
 
 -- COMMAND ----------
 
--- drop table hr_silver.misc;
+drop table hr_silver.misc;
 
 
 
@@ -141,16 +143,40 @@ select * from hr_silver.employees_clean
 
 -- COMMAND ----------
 
-create or replace table hr_silver.emp_details as
-select e1.EMPLOYEE_ID, concat(e1.FIRST_NAME, ' ',  e1.LAST_NAME) as NAME, e1.JOB_ID, concat(e2.FIRST_NAME, ' ', e2.LAST_NAME) as MANAGER_NAME
+create or replace table hr_gold.emp_details as
+select e1.EMPLOYEE_ID, concat(e1.FIRST_NAME, ' ',  e1.LAST_NAME) as NAME, e1.JOB_ID, concat(e2.FIRST_NAME, ' ', e2.LAST_NAME) as MANAGER_NAME, e1.DEPARTMENT_ID, e1.HIRE_DATE, e1.SALARY, e1.COMMISSION_PCT
 from hr_silver.employees_clean e1 
 inner join hr_silver.employees_clean e2
 on e1.MANAGER_ID=e2.EMPLOYEE_ID
 
 -- COMMAND ----------
 
-select * from hr_silver.emp_details
+select * from hr_gold.emp_details
 
 -- COMMAND ----------
 
-select * from hr_silver.job_details
+-- MAGIC %md
+-- MAGIC ###Creating a table which combines hr_silver.job_details and hr_gold.emp_details 
+
+-- COMMAND ----------
+
+create or replace table hr_gold.Bigtable
+select distinct(e.EMPLOYEE_ID), NAME, e.MANAGER_NAME, e.JOB_ID, j.job_title , e.department_id ,j.department_name, e.salary as employee_salary, round((j.max_salary+j.min_salary)/2, 2) as avg_dept_salary
+from hr_gold.emp_details e
+left join 
+hr_silver.job_details j
+on
+e.JOB_ID=j.job_id
+order by EMPLOYEE_ID asc
+
+-- COMMAND ----------
+
+select distinct(EMPLOYEE_ID) from hr_gold.bigtable
+
+-- COMMAND ----------
+
+select distinct(EMPLOYEE_ID) from hr_gold.emp_details
+
+-- COMMAND ----------
+
+select * from job_details

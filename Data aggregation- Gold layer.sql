@@ -97,7 +97,7 @@ select employee_id, count(job_title) as jobs_by_employee from hr_silver.job_deta
 
 -- COMMAND ----------
 
-select count(job_title) as jobs_per_department, department_name from hr_silver.job_details group by department_name order by jobs_per_department desc
+select department_name, count(job_title) as jobs_per_department  from hr_silver.job_details group by department_name order by jobs_per_department desc
 
 -- COMMAND ----------
 
@@ -158,17 +158,9 @@ select city, COUNTRY_NAME, REGION_NAME from hr_gold.address order by REGION_NAME
 
 -- COMMAND ----------
 
-select * from hr_bronze.locations_raw
-
--- COMMAND ----------
-
 -- MAGIC %md
 -- MAGIC ###Finding relations in employees_jobs table
 -- MAGIC
-
--- COMMAND ----------
-
-select * from hr_silver.emp_details
 
 -- COMMAND ----------
 
@@ -186,4 +178,28 @@ select MANAGER_NAME, count(EMPLOYEE_ID) as Direct_Reports from hr_silver.emp_det
 
 -- COMMAND ----------
 
-select JOB_ID, count(EMPLOYEE_ID) as employees_in_job from hr_silver.emp_details group by JOB_ID order by employees_in_job desc 
+select JOB_ID, count(EMPLOYEE_ID) as employees_in_job from hr_gold.emp_details group by JOB_ID order by employees_in_job desc 
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC ###Querying using the bigtable
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC ####Finding the employees drawing more salary than department average
+-- MAGIC
+
+-- COMMAND ----------
+
+select department_name, count(*) as `salary more than dept average` from hr_gold.bigtable where employee_salary > avg_dept_salary group by department_name order by `salary more than dept average` desc
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC #### Employees drawing the highest compensation difference
+
+-- COMMAND ----------
+
+select distinct(EMPLOYEE_ID), NAME,  round(((employee_salary - avg_dept_salary )/avg_dept_salary)*100, 2) as `compensation_difference (%)`, department_name from hr_gold.bigtable where employee_salary > avg_dept_salary order by `compensation_difference (%)` desc

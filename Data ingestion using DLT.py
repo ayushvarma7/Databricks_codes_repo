@@ -11,6 +11,20 @@ output_path="s3://ayush-varma/databricks_project/output/"
 
 @dlt.table(
     table_properties={
+        "myPipeline.quality":"bronze",
+        "pipelines.autoOptimize.managed": "true"
+    }
+)
+
+def countries():
+   countries_df=(spark.read.csv(path=f"{input_path}/COUNTRIES.csv", header=True, inferSchema=True))
+
+   return countries_df
+
+# COMMAND ----------
+
+@dlt.table(
+    table_properties={
          "myPipeline.quality":"bronze",
         "pipelines.autoOptimize.managed": "true"
     }
@@ -90,20 +104,6 @@ def regions():
     regions_df=spark.read.csv(path=f"{input_path}/REGIONS.csv", header=True, inferSchema=True)
 
     return regions_df
-
-# COMMAND ----------
-
-@dlt.table(
-    table_properties={
-        "myPipeline.quality":"bronze",
-        "pipelines.autoOptimize.managed": "true"
-    }
-)
-
-def countries():
-   countries_df=(spark.read.csv(path=f"{input_path}/COUNTRIES.csv", header=True, inferSchema=True))
-
-   return countries_df
 
 # COMMAND ----------
 
